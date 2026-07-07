@@ -10,7 +10,7 @@
 (async () => {
   /*
     Esta versão preserva integralmente o HTML publicado no commit original
-    e altera somente os conteúdos relacionados aos indicadores do Bolão.
+    e altera somente conteúdos/indicadores para a atualização semanal.
   */
   const ORIGINAL =
     "https://raw.githubusercontent.com/cdteng/figurinhas/614563e9b9f4e75f217f935d656a81c62369e87b/index.html";
@@ -32,132 +32,286 @@
         normalize(el.textContent).includes(normalize(text))
       );
 
+    const setText = (root, selector, text) => {
+      const el = root && root.querySelector(selector);
+      if (el) el.textContent = text;
+    };
+
+    const replaceHTML = (from, to) => {
+      doc.body.innerHTML = doc.body.innerHTML.split(from).join(to);
+    };
+
+    /* =========================
+       VISÃO GERAL / HERO
+       ========================= */
+    replaceHTML("Atualização consolidada da campanha da Copa: performance comercial, funil de engajamento, operação especial de 20/06, mídia e principais aprendizados.",
+      "Atualização consolidada da campanha da Copa: performance comercial, evolução do Bolão, WhatsApp, mídia paga, venda e retirada de figurinhas e principais aprendizados até 07/07.");
+    replaceHTML("01 a 21/06/2026", "19/05 a 07/07/2026");
+
     /* KPIs superiores */
     const kpis = [...doc.querySelectorAll(".kpi")];
 
-    const uniqueKpi = kpis.find((el) =>
+    const bolaoKpi = kpis.find((el) =>
+      normalize(el.textContent).includes("usuários únicos no bolão") ||
       normalize(el.textContent).includes("participantes no bolão")
     );
-    if (uniqueKpi) {
-      const value = uniqueKpi.querySelector("strong");
-      const label = uniqueKpi.querySelector("span");
-      if (value) value.textContent = "50.532";
-      if (label) label.textContent = "Usuários únicos no Bolão";
+    if (bolaoKpi) {
+      setText(bolaoKpi, "strong", "103.442");
+      setText(bolaoKpi, "span", "Participantes no Bolão");
     }
 
     const accessKpi = kpis.find((el) =>
-      normalize(el.textContent).includes("acessos ao mini app")
+      normalize(el.textContent).includes("acessos ao mini app") ||
+      normalize(el.textContent).includes("palpites")
     );
     if (accessKpi) {
-      const value = accessKpi.querySelector("strong");
-      if (value) value.textContent = "398 mil";
+      setText(accessKpi, "strong", "1.496.765");
+      setText(accessKpi, "span", "Palpites registrados");
+    }
+
+    const pushesKpi = kpis.find((el) =>
+      normalize(el.textContent).includes("pushes enviados")
+    );
+    if (pushesKpi) {
+      setText(pushesKpi, "strong", "38,5M");
     }
 
     const impressionsKpi = kpis.find((el) =>
       normalize(el.textContent).includes("impressões do bolão")
     );
     if (impressionsKpi) {
-      const value = impressionsKpi.querySelector("strong");
-      if (value) value.textContent = "13,8M";
+      setText(impressionsKpi, "strong", "18,1M");
     }
 
-    /* Seção do Bolão */
+    const clicksKpi = kpis.find((el) =>
+      normalize(el.textContent).includes("cliques do bolão")
+    );
+    if (clicksKpi) {
+      setText(clicksKpi, "strong", "128 mil");
+    }
+
+    const figKpi = kpis.find((el) =>
+      normalize(el.textContent).includes("figurinhas vendidas")
+    );
+    if (figKpi) {
+      setText(figKpi, "strong", "1,62 mi");
+    }
+
+    /* =========================
+       BOLÃO
+       ========================= */
     const bolao = doc.querySelector("#bolao");
     if (bolao) {
       const subtitle = bolao.querySelector(".subtitle");
       if (subtitle) {
         subtitle.textContent =
-          "Os indicadores de CRM representam alcance e cliques das comunicações. No Bolão, 50.532 usuários únicos realizaram 398 mil acessos ao mini app.";
+          "Os indicadores de CRM representam alcance e cliques das comunicações. No Bolão, a campanha chegou a 103.442 participantes e 1.496.765 palpites registrados.";
       }
 
       const steps = [...bolao.querySelectorAll(".step")];
 
-      const pushStep = steps.find((el) =>
-        normalize(el.textContent).includes("pushes enviados")
-      );
-      if (pushStep) {
-        const value = pushStep.querySelector(".num");
-        if (value) value.textContent = "27,8M";
-      }
+      const pushStep = steps.find((el) => normalize(el.textContent).includes("pushes enviados"));
+      if (pushStep) setText(pushStep, ".num", "38,5M");
 
-      const impressionStep = steps.find((el) =>
-        normalize(el.textContent).includes("impressões")
-      );
-      if (impressionStep) {
-        const value = impressionStep.querySelector(".num");
-        if (value) value.textContent = "13,8M";
-      }
+      const impressionStep = steps.find((el) => normalize(el.textContent).includes("impressões"));
+      if (impressionStep) setText(impressionStep, ".num", "18,1M");
 
-      const clickStep = steps.find((el) =>
-        normalize(el.textContent).includes("cliques")
-      );
-      if (clickStep) {
-        const value = clickStep.querySelector(".num");
-        if (value) value.textContent = "98 mil";
-      }
+      const clickStep = steps.find((el) => normalize(el.textContent).includes("cliques"));
+      if (clickStep) setText(clickStep, ".num", "128 mil");
 
-      const accessStep = steps.find((el) =>
-        normalize(el.textContent).includes("acessos ao mini app")
-      );
+      const accessStep = steps.find((el) => normalize(el.textContent).includes("acessos ao mini app"));
       if (accessStep) {
-        const value = accessStep.querySelector(".num");
-        const label = accessStep.querySelector(".txt");
-        if (value) value.textContent = "398 mil";
-        if (label) label.textContent = "acessos ao mini app";
+        setText(accessStep, ".num", "103.442");
+        setText(accessStep, ".txt", "participantes");
       }
 
       const userStep = steps.find((el) =>
+        normalize(el.textContent).includes("usuários únicos") ||
         normalize(el.textContent).includes("participantes")
       );
-      if (userStep) {
-        const value = userStep.querySelector(".num");
-        const label = userStep.querySelector(".txt");
-        if (value) value.textContent = "50.532";
-        if (label) label.textContent = "usuários únicos";
+      if (userStep && userStep !== accessStep) {
+        setText(userStep, ".num", "1.496.765");
+        setText(userStep, ".txt", "palpites registrados");
       }
 
-      /* Mantém as cinco linhas e o mesmo layout, alterando somente o conteúdo */
       const rates = [...bolao.querySelectorAll(".rate")];
       const rateContent = [
-        ["Taxa média de visualização", "49,5%"],
+        ["Taxa média de visualização", "47,0%"],
         ["CTR consolidado", "0,71%"],
-        ["Usuários únicos", "50.532"],
-        ["Acessos ao mini app", "398 mil"],
-        ["Acessos médios por usuário", "7,9x"]
+        ["Participantes", "103.442"],
+        ["Palpites registrados", "1.496.765"],
+        ["Palpites médios por participante", "14,5x"]
       ];
-
       rates.forEach((row, index) => {
         if (!rateContent[index]) return;
-        const label = row.querySelector("span");
-        const value = row.querySelector("b");
-        if (label) label.textContent = rateContent[index][0];
-        if (value) value.textContent = rateContent[index][1];
+        setText(row, "span", rateContent[index][0]);
+        setText(row, "b", rateContent[index][1]);
       });
 
       const miniCards = [...bolao.querySelectorAll(".compact-metrics .mini")];
       const miniContent = [
-        ["398 mil", "Acessos ao mini app"],
-        ["50,5K", "Usuários únicos"],
-        ["7,9x", "Acessos médios"],
+        ["103,4K", "Participantes"],
+        ["1,49M", "Palpites"],
+        ["14,5x", "Palpites médios"],
         ["0,71%", "CTR"]
       ];
-
       miniCards.forEach((card, index) => {
         if (!miniContent[index]) return;
-        const value = card.querySelector("b");
-        const label = card.querySelector("small");
-        if (value) value.textContent = miniContent[index][0];
-        if (label) label.textContent = miniContent[index][1];
+        setText(card, "b", miniContent[index][0]);
+        setText(card, "small", miniContent[index][1]);
       });
 
       const insight = bolao.querySelector(".insight");
       if (insight) {
         insight.innerHTML =
-          "<b>O Bolão funciona como motor de recorrência.</b> Os 50.532 usuários únicos realizaram aproximadamente 398 mil acessos ao mini app, uma média de 7,9 acessos por usuário, demonstrando retorno recorrente para acompanhar rodadas, pontuação e resultados.";
+          "<b>O Bolão segue como motor de recorrência.</b> A campanha alcançou 103.442 participantes e 1.496.765 palpites registrados, com média aproximada de 14,5 palpites por participante. Mesmo sem atingir a meta corporativa de 500 mil participantes, a frente consolidou uma base relevante para recorrência, CRM, mídia e futuras ativações dentro do app.";
       }
     }
 
-    /* Escreve a página original com somente os conteúdos corrigidos */
+    /* =========================
+       FIGURINHAS
+       ========================= */
+    const figurinhas = doc.querySelector("#figurinhas");
+    if (figurinhas) {
+      const subtitle = figurinhas.querySelector(".subtitle");
+      if (subtitle) {
+        subtitle.textContent =
+          "A campanha consolidou volume relevante de vendas e, principalmente, forte taxa de retirada física, indicador de qualidade operacional da jornada.";
+      }
+
+      const figHTML = figurinhas.innerHTML
+        .replaceAll("940.097", "1.616.696")
+        .replaceAll("822.325", "132.993")
+        .replaceAll("700.155", "1.483.703")
+        .replaceAll("145.451", "153.660")
+        .replaceAll("85,1%", "91,8%")
+        .replaceAll("14,9%", "8,68%")
+        .replaceAll("301.754", "325.685")
+        .replaceAll("11.446", "12.324")
+        .replaceAll("Retirada é o KPI de qualidade. A campanha não gerou apenas intenção digital: mais de 700 mil figurinhas foram retiradas fisicamente.",
+          "Retirada segue sendo o KPI de qualidade. A campanha não gerou apenas intenção digital: mais de 1,48 milhão de figurinhas foram retiradas fisicamente, com taxa de retirada de 91,8% e cancelamento de 8,68%.");
+      figurinhas.innerHTML = figHTML;
+    }
+
+    /* Atualizações globais de textos e números recorrentes da seção de figurinhas */
+    replaceHTML("940.097", "1.616.696");
+    replaceHTML("822.325", "132.993");
+    replaceHTML("700.155", "1.483.703");
+    replaceHTML("145.451", "153.660");
+    replaceHTML("85,1%", "91,8%");
+    replaceHTML("14,9%", "8,68%");
+    replaceHTML("301.754", "325.685");
+    replaceHTML("11.446", "12.324");
+
+    /* =========================
+       DESTAQUE DA SEMANA / WHATSAPP
+       ========================= */
+    const destaque = findByText("section", "Destaque da semana") || findByText("section", "Operação 20/06");
+    if (destaque) {
+      const title = destaque.querySelector("h2, h3");
+      if (title) title.textContent = "03 — Comunicação estratégica via WhatsApp";
+
+      const subtitle = destaque.querySelector(".subtitle");
+      if (subtitle) {
+        subtitle.textContent =
+          "Na reta final, o WhatsApp foi usado como canal estratégico para ampliar alcance do Bolão de TODOS e reforçar a compra de pacotes de figurinhas.";
+      }
+
+      const content = destaque.innerHTML;
+      destaque.innerHTML = content
+        .replaceAll("Brasil 3 x 0 Haiti", "Bolão de TODOS + Pacotes de Figurinhas")
+        .replaceAll("Após a vitória da Seleção, a campanha ativou uma oferta relâmpago das 8h às 14h.", "Foram quatro disparos principais: três voltados a novos prêmios do Bolão e um focado em pacotes promocionais de figurinhas.")
+        .replaceAll("Oferta", "WhatsApp")
+        .replaceAll("50% OFF", "310 mil")
+        .replaceAll("Preço", "Investimento")
+        .replaceAll("R$ 3,50", "R$ 96,8 mil")
+        .replaceAll("560.924", "263.193")
+        .replaceAll("Reservas", "Enviadas")
+        .replaceAll("353.256", "236.457")
+        .replaceAll("Retiradas", "Entregues")
+        .replaceAll("994", "177.093")
+        .replaceAll("Cancelamentos", "Lidas")
+        .replaceAll("68%", "89,8%")
+        .replaceAll("das reservas do mês", "taxa de entrega")
+        .replaceAll("63%", "74,9%")
+        .replaceAll("das retiradas do mês", "taxa de leitura")
+        .replaceAll("0,9%", "39.396")
+        .replaceAll("dos cancelamentos", "não entregues")
+        .replaceAll("15x", "67%")
+        .replaceAll("mais reservas vs média", "dos aceites da semana entre 01 e 03/07")
+        .replaceAll("mais retiradas vs média", "concentração no período de maior pressão")
+        .replaceAll("6h", "4")
+        .replaceAll("janela da oferta", "disparos principais")
+        .replaceAll("Oferta relâmpago 50% OFF", "WhatsApp demonstrou impacto direto na ativação do Bolão: entre 01/07 e 03/07, período de maior intensidade, foram registrados aproximadamente 17,3 mil aceites do regulamento, cerca de 67% do total da semana.");
+    }
+
+    /* =========================
+       MÍDIA
+       ========================= */
+    const midia = doc.querySelector("#midia") || findByText("section", "Meta Ads");
+    if (midia) {
+      const subtitle = midia.querySelector(".subtitle");
+      if (subtitle) {
+        subtitle.textContent =
+          "Mídia paga atuou como sustentação de alcance e instalação do app. Na reta final, houve aceleração de verba para impulsionar o Bolão e o prêmio de R$ 100 mil.";
+      }
+
+      const midiaHTML = midia.innerHTML
+        .replaceAll("Meta Ads na operação 20/06", "Mídia paga | acumulado e aceleração de julho")
+        .replaceAll("Mídia atuou como amplificação da oferta relâmpago, com baixo CPC e alta cobertura no mesmo dia.",
+          "O investimento combinou campanhas de clique, instalação, engajamento e remarketing. Para leitura executiva, o CPI considera o custo das campanhas de instalação e mantém as instalações atribuídas por todas as campanhas.")
+        .replaceAll("R$ 3.798", "R$ 214 mil")
+        .replaceAll("Investimento", "Investimento")
+        .replaceAll("603.320", "26M")
+        .replaceAll("Impressões", "Impressões")
+        .replaceAll("323.344", "8,1M")
+        .replaceAll("Alcance", "Alcance")
+        .replaceAll("22.883", "16.109")
+        .replaceAll("Cliques", "Instalações")
+        .replaceAll("R$ 0,17", "R$ 0,51")
+        .replaceAll("CPC médio", "CPC global")
+        .replaceAll("Campanha ampla", "Eficiência de aquisição")
+        .replaceAll("16.920", "R$ 3,95")
+        .replaceAll("R$ 0,13", "menor CPI")
+        .replaceAll("405.512", "R$ 7,85")
+        .replaceAll("155.786", "CPI médio")
+        .replaceAll("R$ 2.132", "R$ 8,63")
+        .replaceAll("504", "CPI na aceleração")
+        .replaceAll("Campanha complementar", "Leitura executiva")
+        .replaceAll("5.963", "Aporte adicional")
+        .replaceAll("R$ 0,28", "R$ 70 mil")
+        .replaceAll("197.808", "Reta final")
+        .replaceAll("167.558", "Oitavas + prêmio")
+        .replaceAll("R$ 1.666", "Custo inflado pela escala")
+        .replaceAll("592", "CPI ainda defensável no consolidado");
+      midia.innerHTML = midiaHTML;
+
+      const insight = midia.querySelector(".insight");
+      if (insight) {
+        insight.innerHTML =
+          "<b>Leitura da mídia:</b> antes da aceleração, a campanha chegou a operar com CPI na casa de R$ 3,95 a R$ 4,55. Com o aporte adicional de R$ 70 mil e a intensificação da reta final, o custo naturalmente inflou, chegando a um patamar de aceleração próximo de R$ 8,63. A leitura consolidada fica mais equilibrada ao considerar as instalações atribuídas por todas as campanhas e separar o custo das campanhas de clique no cálculo de CPI.";
+      }
+    }
+
+    /* =========================
+       PRÓXIMOS PASSOS
+       ========================= */
+    const proximos = doc.querySelector("#proximos") || findByText("section", "Próximos passos");
+    if (proximos) {
+      const blocks = [...proximos.querySelectorAll("li, .recommendation, .card, p")];
+      if (blocks.length) {
+        replaceHTML("Repetir janelas relâmpago", "Consolidar aprendizados de mídia e CRM");
+        replaceHTML("Priorizar jogos do Brasil e momentos com alta atenção.", "Separar leituras de clique, instalação e engajamento para medir eficiência por objetivo.");
+        replaceHTML("Cruzar Bolão + Figurinhas", "Aproveitar base do Bolão");
+        replaceHTML("Usar recorrência do Bolão para sustentar recompra de pacotes.", "Usar participantes e palpites como base para novas campanhas de recorrência no app.");
+        replaceHTML("Otimizar retirada", "Manter foco na retirada");
+        replaceHTML("Monitorar franquias com maior estoque e menor retirada.", "Acompanhar estoque, reservas e retiradas para reduzir cancelamentos e preservar qualidade operacional.");
+        replaceHTML("Escalar mídia tática", "Planejar aceleração de verba com antecedência");
+        replaceHTML("Alocar verba em dias com oferta, contexto e capacidade operacional.", "Evitar que a aceleração tardia pressione CPI; antecipar mídia em fases de maior elasticidade da base.");
+      }
+    }
+
+    /* Escreve a página original com somente os conteúdos atualizados */
     const result = "<!doctype html>\n" + doc.documentElement.outerHTML;
     document.open();
     document.write(result);
