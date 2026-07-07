@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Relatório Executivo | Copa de TODOS</title>
+</head>
+<body>
+<script>
+(async () => {
+  /*
+    Esta versão preserva integralmente o HTML publicado no commit original
+    e altera somente os conteúdos relacionados aos indicadores do Bolão.
+  */
+  const ORIGINAL =
+    "https://raw.githubusercontent.com/cdteng/figurinhas/614563e9b9f4e75f217f935d656a81c62369e87b/index.html";
+
+  try {
+    const response = await fetch(ORIGINAL, { cache: "no-store" });
+    if (!response.ok) {
+      throw new Error(`Não foi possível carregar a página-base (${response.status}).`);
+    }
+
+    const source = await response.text();
+    const doc = new DOMParser().parseFromString(source, "text/html");
+
+    const normalize = (value) =>
+      (value || "").replace(/\s+/g, " ").trim().toLowerCase();
+
+    const findByText = (selector, text, root = doc) =>
+      [...root.querySelectorAll(selector)].find((el) =>
+        normalize(el.textContent).includes(normalize(text))
+      );
+
+    /* KPIs superiores */
+    const kpis = [...doc.querySelectorAll(".kpi")];
+
+    const uniqueKpi = kpis.find((el) =>
+      normalize(el.textContent).includes("participantes no bolão")
+    );
+    if (uniqueKpi) {
+      const value = uniqueKpi.querySelector("strong");
+      const label = uniqueKpi.querySelector("span");
+      if (value) value.textContent = "50.532";
+      if (label) label.textContent = "Usuários únicos no Bolão";
+    }
+
+    const accessKpi = kpis.find((el) =>
+      normalize(el.textContent).includes("acessos ao mini app")
+    );
+    if (accessKpi) {
+      const value = accessKpi.querySelector("strong");
+      if (value) value.textContent = "398 mil";
+    }
+
+    const impressionsKpi = kpis.find((el) =>
+      normalize(el.textContent).includes("impressões do bolão")
+    );
+    if (impressionsKpi) {
+      const value = impressionsKpi.querySelector("strong");
+      if (value) value.textContent = "13,8M";
+    }
+
+    /* Seção do Bolão */
+    const bolao = doc.querySelector("#bolao");
+    if (bolao) {
+      const subtitle = bolao.querySelector(".subtitle");
+      if (subtitle) {
+        subtitle.textContent =
+          "Os indicadores de CRM representam alcance e cliques das comunicações. No Bolão, 50.532 usuários únicos realizaram 398 mil acessos ao mini app.";
+      }
+
+      const steps = [...bolao.querySelectorAll(".step")];
+
+      const pushStep = steps.find((el) =>
+        normalize(el.textContent).includes("pushes enviados")
+      );
+      if (pushStep) {
+        const value = pushStep.querySelector(".num");
+        if (value) value.textContent = "27,8M";
+      }
+
+      const impressionStep = steps.find((el) =>
+        normalize(el.textContent).includes("impressões")
+      );
+      if (impressionStep) {
+        const value = impressionStep.querySelector(".num");
+        if (value) value.textContent = "13,8M";
+      }
+
+      const clickStep = steps.find((el) =>
+        normalize(el.textContent).includes("cliques")
+      );
+      if (clickStep) {
+        const value = clickStep.querySelector(".num");
+        if (value) value.textContent = "98 mil";
+      }
+
+      const accessStep = steps.find((el) =>
+        normalize(el.textContent).includes("acessos ao mini app")
+      );
+      if (accessStep) {
+        const value = accessStep.querySelector(".num");
+        const label = accessStep.querySelector(".txt");
+        if (value) value.textContent = "398 mil";
+        if (label) label.textContent = "acessos ao mini app";
+      }
+
+      const userStep = steps.find((el) =>
+        normalize(el.textContent).includes("participantes")
+      );
+      if (userStep) {
+        const value = userStep.querySelector(".num");
+        const label = userStep.querySelector(".txt");
+        if (value) value.textContent = "50.532";
+        if (label) label.textContent = "usuários únicos";
+      }
+
+      /* Mantém as cinco linhas e o mesmo layout, alterando somente o conteúdo */
+      const rates = [...bolao.querySelectorAll(".rate")];
+      const rateContent = [
+        ["Taxa média de visualização", "49,5%"],
+        ["CTR consolidado", "0,71%"],
+        ["Usuários únicos", "50.532"],
+        ["Acessos ao mini app", "398 mil"],
+        ["Acessos médios por usuário", "7,9x"]
+      ];
+
+      rates.forEach((row, index) => {
+        if (!rateContent[index]) return;
+        const label = row.querySelector("span");
+        const value = row.querySelector("b");
+        if (label) label.textContent = rateContent[index][0];
+        if (value) value.textContent = rateContent[index][1];
+      });
+
+      const miniCards = [...bolao.querySelectorAll(".compact-metrics .mini")];
+      const miniContent = [
+        ["398 mil", "Acessos ao mini app"],
+        ["50,5K", "Usuários únicos"],
+        ["7,9x", "Acessos médios"],
+        ["0,71%", "CTR"]
+      ];
+
+      miniCards.forEach((card, index) => {
+        if (!miniContent[index]) return;
+        const value = card.querySelector("b");
+        const label = card.querySelector("small");
+        if (value) value.textContent = miniContent[index][0];
+        if (label) label.textContent = miniContent[index][1];
+      });
+
+      const insight = bolao.querySelector(".insight");
+      if (insight) {
+        insight.innerHTML =
+          "<b>O Bolão funciona como motor de recorrência.</b> Os 50.532 usuários únicos realizaram aproximadamente 398 mil acessos ao mini app, uma média de 7,9 acessos por usuário, demonstrando retorno recorrente para acompanhar rodadas, pontuação e resultados.";
+      }
+    }
+
+    /* Escreve a página original com somente os conteúdos corrigidos */
+    const result = "<!doctype html>\n" + doc.documentElement.outerHTML;
+    document.open();
+    document.write(result);
+    document.close();
+  } catch (error) {
+    document.body.innerHTML = `
+      <main style="font-family:Arial,sans-serif;max-width:720px;margin:80px auto;padding:24px;line-height:1.5">
+        <h1>Não foi possível carregar o relatório</h1>
+        <p>${String(error.message || error)}</p>
+      </main>`;
+  }
+})();
+</script>
+</body>
+</html>
